@@ -1,0 +1,43 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "github-label-management"
+version = "0.0.0"
+description = "🤖 A simple tool to manage GitHub labels."
+authors = [
+    { name = "Liu, Bryant", email = "chi10211201@cycu.org.tw" }
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+keywords = ["github tool", "label"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Utilities",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Environment :: Console",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "PyYAML (>=6.0)",
+    "pygithub (>=2.5.0,<3.0.0)",
+]
+
+[tool.poetry]
+name = "github-label-management"
+version = "0.0.0"
+description = "🤖 A simple tool to manage GitHub labels."
+authors = [
+    "Liu, Bryant <chi10211201@cycu.org.tw>",
+]
+
+[project.urls]
+Homepage = "https://github.com/Chisanan232/Just-Some-Tools/github-label-management/"
+Repository = "https://github.com/Chisanan232/Just-Some-Tools/github-label-management/"
+"Project Management" = "https://app.clickup.com/9018752317/v/f/90183776175/90182761188"
