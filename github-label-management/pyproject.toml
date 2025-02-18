@@ -41,3 +41,11 @@ authors = [
 Homepage = "https://github.com/Chisanan232/Just-Some-Tools/github-label-management/"
 Repository = "https://github.com/Chisanan232/Just-Some-Tools/github-label-management/"
 "Project Management" = "https://app.clickup.com/9018752317/v/f/90183776175/90182761188"
+
+[tool.poetry.group.test.dependencies]
+# Dependency for test
+pytest = "^8.1.1"
+pytest-cov = "^5.0.0"
+# Dependency for coverage report
+coverage = "^6.2"
+coveralls = "^3.3.1"
