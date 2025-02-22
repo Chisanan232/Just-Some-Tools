@@ -11,7 +11,7 @@ authors = [
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
-keywords = ["github tool", "label"]
+keywords = ["github tool", "label", "management"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
