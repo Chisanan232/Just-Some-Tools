@@ -136,10 +136,7 @@ class TestGitHubLabelBot:
 
 
     # Test download_as_config
-    def test_download_as_config(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch):
-        mock_yaml = mocker.patch("github_label_bot.manager.YAML")
-        mock_yaml().read.return_value = {"repositories": ["my-org/my-repository"]}
-
+    def test_download_as_config(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_yaml_file):
         # Mock the token retrieval
         monkeypatch.setenv("GITHUB_TOKEN", "mock_token")
 
@@ -148,11 +145,14 @@ class TestGitHubLabelBot:
         mock_repo = mock_github().get_repo.return_value
         mock_download_labels = mocker.patch("github_label_bot.manager.GitHubLabelBot._download_labels")
 
+        # Mock configuration loading
+        mocker.patch("github_label_bot.manager.GitHubLabelBot._load_label_config", return_value=bot._load_label_config(mock_yaml_file))
+
         # Call the function
         bot.download_as_config()
 
         # Assert that download_labels was called with the correct repository
-        mock_yaml().read.assert_called_once()
+        mock_github().get_repo.assert_called()
         mock_download_labels.assert_called_once_with(mock_repo)
 
 

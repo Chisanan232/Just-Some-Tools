@@ -110,9 +110,8 @@ class GitHubLabelBot:
         print("[DEBUG] Connect to GitHub ...")
         github = Github(token)
 
-        config = YAML().read(path="./test/_data/github-labels.yaml")
-        print(f"[DEBUG] config: {config}")
-        config_model = GitHubLabelManagementConfig.serialize(config)
+        print(f"[DEBUG] Load the configuration.")
+        config_model = self._load_label_config('./test/_data/github-labels.yaml')
 
         # Process each repository
         print(f"[DEBUG] config_model.repositories: {config_model.repositories}")
