@@ -13,12 +13,12 @@ from ._utils.file.operation import YAML
 
 class GitHubLabelBot:
 
-    def load_label_config(self, config_path: str) -> GitHubLabelManagementConfig:
+    def _load_label_config(self, config_path: str) -> GitHubLabelManagementConfig:
         """Load label configuration from YAML file."""
         with open(config_path, 'r') as file:
             return GitHubLabelManagementConfig.serialize(yaml.safe_load(file))
 
-    def sync_labels(self, repo: Repository, label_config: GitHubLabelManagementConfig) -> None:
+    def _sync_labels(self, repo: Repository, label_config: GitHubLabelManagementConfig) -> None:
         """Synchronize repository labels with configuration."""
         # Get existing labels
         existing_labels: Dict[str, GitHubLabel] = {label.name: label for label in repo.get_labels()}
@@ -62,7 +62,7 @@ class GitHubLabelBot:
 
         # Load configuration
         print(f"[DEBUG] Load the configuration.")
-        config = self.load_label_config('./test/_data/github-labels.yaml')
+        config = self._load_label_config('./test/_data/github-labels.yaml')
 
         # Process each repository
         print(f"[DEBUG] Start to sync up the GitHub label setting ...")
@@ -71,7 +71,7 @@ class GitHubLabelBot:
             try:
                 repo = g.get_repo(repo_name)
                 print(f"\nProcessing repository: {repo_name}")
-                self.sync_labels(repo, config)
+                self._sync_labels(repo, config)
             except github.GithubException as e:
                 print(f"Error processing {repo_name}: {e}")
 
@@ -83,7 +83,7 @@ class GitHubLabelBot:
         return token
 
 
-    def download_labels(self, repo: github.Repository) -> None:
+    def _download_labels(self, repo: github.Repository) -> None:
         existing_labels: Dict[str, GitHubLabel] = {label.name: label for label in repo.get_labels()}
         labels_config: Dict[str, GitHubLabelBotLabel] = {}
         for label_name, label_info in existing_labels.items():
@@ -120,6 +120,6 @@ class GitHubLabelBot:
             try:
                 repo = g.get_repo(repo)
                 print(f"\nProcessing repository: {repo}")
-                self.download_labels(repo)
+                self._download_labels(repo)
             except github.GithubException as e:
                 print(f"Error processing {repo}: {e}")

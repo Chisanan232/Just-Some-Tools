@@ -37,8 +37,8 @@ class TestGitHubLabelBot:
 
 
     # Test load_label_config
-    def test_load_label_config(self, bot: GitHubLabelBot, mock_yaml_file):
-        config = bot.load_label_config(mock_yaml_file)
+    def test__load_label_config(self, bot: GitHubLabelBot, mock_yaml_file):
+        config = bot._load_label_config(mock_yaml_file)
         assert isinstance(config, GitHubLabelManagementConfig)
         assert "my-org/my-repository" in config.repositories
         assert "Bug" in config.labels
@@ -58,7 +58,7 @@ class TestGitHubLabelBot:
 
 
     # Test sync_labels
-    def test_sync_labels_update(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
+    def test__sync_labels_update(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
         mock_repo = mock_github_repo
 
         # Mock configuration for testing
@@ -71,7 +71,7 @@ class TestGitHubLabelBot:
         )
 
         # Call the function
-        bot.sync_labels(mock_repo, label_config)
+        bot._sync_labels(mock_repo, label_config)
 
         # Assert that label.edit was called with the updated properties
         mock_repo.get_labels.assert_called_once()
@@ -81,7 +81,7 @@ class TestGitHubLabelBot:
 
 
     # Test sync_labels with creating new labels
-    def test_sync_labels_create(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
+    def test__sync_labels_create(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
         mock_repo = mock_github_repo
 
         # Empty existing labels
@@ -97,7 +97,7 @@ class TestGitHubLabelBot:
         )
 
         # Call the function
-        bot.sync_labels(mock_repo, label_config)
+        bot._sync_labels(mock_repo, label_config)
 
         # Assert that create_label was called for the new label
         mock_repo.create_label.assert_called_once_with(
@@ -120,12 +120,12 @@ class TestGitHubLabelBot:
 
 
     # Test download_labels
-    def test_download_labels(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
+    def test__download_labels(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
         mock_repo = mock_github_repo
         mock_yaml = mocker.patch("github_label_bot.manager.YAML")
 
         # Call the function
-        bot.download_labels(mock_repo)
+        bot._download_labels(mock_repo)
 
         # Assert that YAML().write() was called with appropriate arguments
         mock_yaml().write.assert_called_once()
@@ -146,7 +146,7 @@ class TestGitHubLabelBot:
         # Mock the GitHub client and repository
         mock_github = mocker.patch("github_label_bot.manager.Github")
         mock_repo = mock_github().get_repo.return_value
-        mock_download_labels = mocker.patch("github_label_bot.manager.GitHubLabelBot.download_labels")
+        mock_download_labels = mocker.patch("github_label_bot.manager.GitHubLabelBot._download_labels")
 
         # Call the function
         bot.download_as_config()
@@ -167,7 +167,7 @@ class TestGitHubLabelBot:
         mock_repo.get_labels.return_value = []
 
         # Mock configuration loading
-        mocker.patch("github_label_bot.manager.GitHubLabelBot.load_label_config", return_value=bot.load_label_config(mock_yaml_file))
+        mocker.patch("github_label_bot.manager.GitHubLabelBot._load_label_config", return_value=bot._load_label_config(mock_yaml_file))
 
         # Call the function
         bot.syncup_as_config()
