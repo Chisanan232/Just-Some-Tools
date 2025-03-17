@@ -58,7 +58,7 @@ class GitHubLabelBot:
 
         # Initialize GitHub client
         print(f"[DEBUG] Initial GitHub repository instance.")
-        g = Github(token)
+        github = Github(token)
 
         # Load configuration
         print(f"[DEBUG] Load the configuration.")
@@ -69,7 +69,7 @@ class GitHubLabelBot:
         for repo_name in config.repositories:
             print(f"[DEBUG] Sync up GtHub project {repo_name}")
             try:
-                repo = g.get_repo(repo_name)
+                repo = github.get_repo(repo_name)
                 print(f"\nProcessing repository: {repo_name}")
                 self._sync_labels(repo, config)
             except github.GithubException as e:
@@ -108,7 +108,7 @@ class GitHubLabelBot:
 
         # Initialize GitHub client
         print("[DEBUG] Connect to GitHub ...")
-        g = Github(token)
+        github = Github(token)
 
         config = YAML().read(path="./test/_data/github-labels.yaml")
         print(f"[DEBUG] config: {config}")
@@ -118,7 +118,7 @@ class GitHubLabelBot:
         print(f"[DEBUG] config_model.repositories: {config_model.repositories}")
         for repo in config_model.repositories:
             try:
-                repo = g.get_repo(repo)
+                repo = github.get_repo(repo)
                 print(f"\nProcessing repository: {repo}")
                 self._download_labels(repo)
             except github.GithubException as e:
