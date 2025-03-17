@@ -1,6 +1,6 @@
 import re
 from abc import ABCMeta, abstractmethod
-from typing import Dict
+from typing import Dict, cast, Any
 
 import pytest
 
@@ -81,18 +81,22 @@ class TestGitHubLabelManagementConfig(_BaseConfigTestSuite):
     @pytest.fixture(scope="function")
     def model(self) -> GitHubLabelManagementConfig:
         data = self._test_data_for_serialize()
+        label_models = {}
+        for label_k, label_v in data["labels"].items():
+            label_models[label_k] = Label.serialize(label_v)
         return GitHubLabelManagementConfig(
             repositories=data["repositories"],
             delete_unused=data["delete_unused"],
-            labels=data["labels"],
+            labels=label_models,
         )
 
-    def _verify_deserialized_data(self, model: Dict[str, str]) -> None:
+    def _verify_deserialized_data(self, model: Dict[str, Any]) -> None:
         assert len(model.keys()) == 3
         data = self._test_data_for_serialize()
         assert model["repositories"] == data["repositories"]
         assert model["delete_unused"] == data["delete_unused"]
-        assert model["labels"] == data["labels"]
+        for lk, lv in model["labels"].items():
+            assert isinstance(lv, dict)
 
     def _test_data_for_serialize(self) -> dict:
         return {

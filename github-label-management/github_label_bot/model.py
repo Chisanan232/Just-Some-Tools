@@ -44,13 +44,25 @@ class Label(_BaseConfig):
 class GitHubLabelManagementConfig(_BaseConfig):
     repositories: List[str] = field(default_factory=list)
     delete_unused: bool = False
-    labels: Dict[Str, Label] = field(default_factory=dict)
+    labels: Dict[str, Label] = field(default_factory=dict)
+
+    def __post_init__(self):
+        if self.labels:
+            labels = {}
+            for lk, lv in self.labels.items():
+                if isinstance(lv, Label):
+                    labels[lk] = lv.deserialize()
+                else:
+                    labels[lk] = lv
 
     def deserialize(self) -> Dict:
+        labels_config = {}
+        for label_name, label_config in self.labels.items():
+            labels_config[label_name] = label_config.deserialize()
         return {
             "repositories": self.repositories or [],
             "delete_unused": self.delete_unused,
-            "labels": self.labels or {},
+            "labels": labels_config or {},
         }
 
     @staticmethod
