@@ -10,7 +10,6 @@ from github_label_bot.manager import (
     _get_github_token,
     download_labels,
     download_as_config,
-    run_download,
 )
 from github_label_bot.model import GitHubLabelManagementConfig, Label as GitHubLabelBotLabel
 from github.Repository import Repository
@@ -178,15 +177,3 @@ def test_syncup_as_config(mocker: MockFixture, monkeypatch, mock_github_repo, mo
     # Assert that repository was fetched and labels were synced
     mock_github().get_repo.assert_called()
     mock_repo.create_label.assert_called()
-
-
-# Test run_download
-def test_run_download(mocker: MockFixture):
-    # Mock download_as_config
-    mock_download = mocker.patch("github_label_bot.manager.download_as_config")
-
-    # Call the function
-    run_download()
-
-    # Assert that download_as_config was called
-    mock_download.assert_called_once()

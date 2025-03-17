@@ -122,8 +122,3 @@ def download_as_config() -> None:
             download_labels(repo)
         except github.GithubException as e:
             print(f"Error processing {repo}: {e}")
-
-
-def run_download() -> None:
-    print("[DEBUG] Start download configuration about GitHub labels.")
-    download_as_config()
