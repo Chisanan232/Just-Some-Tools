@@ -32,7 +32,7 @@ class Label(_BaseConfig):
     def serialize(data: Dict[str, str]) -> "Label":
         color = data.get("color", "")
         description = data.get("description", "")
-        if not (color and description):
+        if not color:
             raise ValueError("Property *color* or *description* cannot be empty.")
         return Label(
             color=color,

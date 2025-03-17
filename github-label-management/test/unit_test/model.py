@@ -67,7 +67,6 @@ class TestLabel(_BaseConfigTestSuite):
             {"color": None, "description": ""},
             {"color": "", "description": None},
             {"color": None, "description": None},
-            {"color": "d73a4a", "description": ""},
             {"color": "", "description": "Bug"},
         ],
     )
