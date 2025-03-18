@@ -76,7 +76,7 @@ class TestGitHubLabelBot:
         # Mock the GitHub client and repository
         mock_github = mocker.patch("github_label_bot.manager.Github")
         mock_repo = mock_github().get_repo.return_value
-        mock_download_labels = mocker.patch("github_label_bot.manager.DownloadProcess.download_labels")
+        mock_download_labels = mocker.patch("github_label_bot.manager.DownloadFromRemote.process")
 
         # Mock configuration loading
         mocker.patch("github_label_bot.manager.GitHubLabelBot._load_label_config", return_value=bot._load_label_config(mock_yaml_file))

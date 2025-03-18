@@ -6,7 +6,7 @@ from github import Github
 from github.Repository import Repository
 
 from .model import GitHubLabelManagementConfig
-from .process import SyncProcess, DownloadProcess
+from .process import SyncUpAsRemote, DownloadFromRemote
 
 
 class GitHubLabelBot:
@@ -20,7 +20,7 @@ class GitHubLabelBot:
     def syncup_as_config(self) -> None:
 
         def _sync_process(_repo, _config) -> None:
-            SyncProcess().sync_labels(_repo, _config)
+            SyncUpAsRemote().process(_repo, _config)
 
         self._operate_with_github(_sync_process)
 
@@ -59,6 +59,6 @@ class GitHubLabelBot:
     def download_as_config(self) -> None:
 
         def _download_process(_repo, _config) -> None:
-            DownloadProcess().download_labels(_repo)
+            DownloadFromRemote().process(_repo)
 
         self._operate_with_github(_download_process)

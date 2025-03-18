@@ -1,15 +1,17 @@
+from unittest.mock import Mock
+
 import pytest
 from github.Repository import Repository
 from pytest_mock import MockFixture
 
 from github_label_bot.model import GitHubLabelManagementConfig, Label as GitHubLabelBotLabel
-from github_label_bot.process import SyncProcess, DownloadProcess
+from github_label_bot.process import SyncUpAsRemote, DownloadFromRemote
 
 
-class TestSyncProcess:
+class TestSyncUpAsRemote:
     @pytest.fixture(scope="function")
-    def process(self) -> SyncProcess:
-        return SyncProcess()
+    def process(self) -> SyncUpAsRemote:
+        return SyncUpAsRemote()
 
     # Mocked GitHub Repository
     @pytest.fixture
@@ -24,7 +26,7 @@ class TestSyncProcess:
 
 
     # Test sync_labels
-    def test_sync_labels_update(self, process: SyncProcess, mocker: MockFixture, mock_github_repo):
+    def test_sync_labels_update(self, process: SyncUpAsRemote, mocker: MockFixture, mock_github_repo):
         mock_repo = mock_github_repo
 
         # Mock configuration for testing
@@ -37,7 +39,7 @@ class TestSyncProcess:
         )
 
         # Call the function
-        process.sync_labels(mock_repo, label_config)
+        process.process(mock_repo, label_config)
 
         # Assert that label.edit was called with the updated properties
         mock_repo.get_labels.assert_called_once()
@@ -47,7 +49,7 @@ class TestSyncProcess:
 
 
     # Test sync_labels with creating new labels
-    def test_sync_labels_create(self, process: SyncProcess, mocker: MockFixture, mock_github_repo):
+    def test_sync_labels_create(self, process: SyncUpAsRemote, mocker: MockFixture, mock_github_repo):
         mock_repo = mock_github_repo
 
         # Empty existing labels
@@ -63,7 +65,7 @@ class TestSyncProcess:
         )
 
         # Call the function
-        process.sync_labels(mock_repo, label_config)
+        process.process(mock_repo, label_config)
 
         # Assert that create_label was called for the new label
         mock_repo.create_label.assert_called_once_with(
@@ -71,10 +73,10 @@ class TestSyncProcess:
         )
 
 
-class TestDownloadProcess:
+class TestDownloadFromRemote:
     @pytest.fixture(scope="function")
-    def bot(self) -> DownloadProcess:
-        return DownloadProcess()
+    def bot(self) -> DownloadFromRemote:
+        return DownloadFromRemote()
 
     # Mocked GitHub Repository
     @pytest.fixture
@@ -88,12 +90,12 @@ class TestDownloadProcess:
         return mock_repo
 
     # Test download_labels
-    def test_download_labels(self, bot: DownloadProcess, mocker: MockFixture, mock_github_repo):
+    def test_download_labels(self, bot: DownloadFromRemote, mocker: MockFixture, mock_github_repo):
         mock_repo = mock_github_repo
         mock_yaml = mocker.patch("github_label_bot.process.YAML")
 
         # Call the function
-        bot.download_labels(mock_repo)
+        bot.process(mock_repo, Mock())
 
         # Assert that YAML().write() was called with appropriate arguments
         mock_yaml().write.assert_called_once()

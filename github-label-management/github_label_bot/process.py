@@ -1,3 +1,4 @@
+from abc import ABCMeta, abstractmethod
 from typing import Dict
 
 import github
@@ -8,9 +9,15 @@ from ._utils import YAML
 from .model import GitHubLabelManagementConfig, Label as GitHubLabelBotLabel
 
 
-class SyncProcess:
+class BaseProcess(metaclass=ABCMeta):
+    @abstractmethod
+    def process(self, repo: Repository, label_config: GitHubLabelManagementConfig) -> None:
+        pass
 
-    def sync_labels(self, repo: Repository, label_config: GitHubLabelManagementConfig) -> None:
+
+class SyncUpAsRemote(BaseProcess):
+
+    def process(self, repo: Repository, label_config: GitHubLabelManagementConfig) -> None:
         """Synchronize repository labels with configuration."""
         # Get existing labels
         existing_labels: Dict[str, GitHubLabel] = {label.name: label for label in repo.get_labels()}
@@ -43,9 +50,9 @@ class SyncProcess:
                     print(f"Deleted label: {name}")
 
 
-class DownloadProcess:
+class DownloadFromRemote(BaseProcess):
 
-    def download_labels(self, repo: github.Repository) -> None:
+    def process(self, repo: github.Repository, label_config: GitHubLabelManagementConfig) -> None:
         existing_labels: Dict[str, GitHubLabel] = {label.name: label for label in repo.get_labels()}
         labels_config: Dict[str, GitHubLabelBotLabel] = {}
         for label_name, label_info in existing_labels.items():
