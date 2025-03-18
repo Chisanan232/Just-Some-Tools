@@ -11,18 +11,19 @@ from .process import SyncUpAsRemote, DownloadFromRemote
 
 class GitHubLabelBot:
 
-    def _load_label_config(self, config_path: str) -> GitHubLabelManagementConfig:
-        """Load label configuration from YAML file."""
-        with open(config_path, 'r') as file:
-            return GitHubLabelManagementConfig.serialize(yaml.safe_load(file))
-
-
     def syncup_as_config(self) -> None:
 
         def _sync_process(_repo, _config) -> None:
             SyncUpAsRemote().process(_repo, _config)
 
         self._operate_with_github(_sync_process)
+
+    def download_as_config(self) -> None:
+
+        def _download_process(_repo, _config) -> None:
+            DownloadFromRemote().process(_repo)
+
+        self._operate_with_github(_download_process)
 
     def _operate_with_github(self, callback: Callable[[Repository, GitHubLabelManagementConfig], None]) -> None:
         # Load GitHub token from environment variable
@@ -48,17 +49,13 @@ class GitHubLabelBot:
             except github.GithubException as e:
                 print(f"Error processing {repo_name}: {e}")
 
-
     def _get_github_token(self):
         token = os.getenv('GITHUB_TOKEN')
         if not token:
             raise ValueError("GITHUB_TOKEN environment variable not set")
         return token
 
-
-    def download_as_config(self) -> None:
-
-        def _download_process(_repo, _config) -> None:
-            DownloadFromRemote().process(_repo)
-
-        self._operate_with_github(_download_process)
+    def _load_label_config(self, config_path: str) -> GitHubLabelManagementConfig:
+        """Load label configuration from YAML file."""
+        with open(config_path, 'r') as file:
+            return GitHubLabelManagementConfig.serialize(yaml.safe_load(file))
