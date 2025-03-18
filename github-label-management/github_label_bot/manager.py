@@ -1,5 +1,6 @@
 import os
-from typing import Mapping, Dict
+from collections.abc import Callable
+from typing import Mapping, Dict, Tuple
 
 import yaml
 import github
@@ -56,6 +57,9 @@ class GitHubLabelBot:
         def _sync_process(_repo, _config) -> None:
             self._sync_labels(_repo, _config)
 
+        self._operate_with_github(_sync_process)
+
+    def _operate_with_github(self, callback: Callable[[Repository, GitHubLabelManagementConfig], None]) -> None:
         # Load GitHub token from environment variable
         print(f"[DEBUG] Get GitHub token.")
         token = self._get_github_token()
@@ -75,7 +79,7 @@ class GitHubLabelBot:
             try:
                 repo = github.get_repo(repo_name)
                 print(f"\nProcessing repository: {repo_name}")
-                _sync_process(repo, config)
+                callback(repo, config)
             except github.GithubException as e:
                 print(f"Error processing {repo_name}: {e}")
 
@@ -111,25 +115,4 @@ class GitHubLabelBot:
         def _download_process(_repo, _config) -> None:
             self._download_labels(_repo)
 
-        # Load GitHub token from environment variable
-        print(f"[DEBUG] Get GitHub token.")
-        token = self._get_github_token()
-
-        # Initialize GitHub client
-        print("[DEBUG] Connect to GitHub ...")
-        github = Github(token)
-
-        # Load configuration
-        print(f"[DEBUG] Load the configuration.")
-        config = self._load_label_config('./test/_data/github-labels.yaml')
-
-        # Process each repository
-        print(f"[DEBUG] config_model.repositories: {config.repositories}")
-        for repo_name in config.repositories:
-            print(f"[DEBUG] Sync GtHub project {repo_name}")
-            try:
-                repo = github.get_repo(repo_name)
-                print(f"\nProcessing repository: {repo_name}")
-                _download_process(repo, config)
-            except github.GithubException as e:
-                print(f"Error processing {repo_name}: {e}")
+        self._operate_with_github(_download_process)
