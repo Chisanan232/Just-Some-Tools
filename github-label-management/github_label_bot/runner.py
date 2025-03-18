@@ -5,11 +5,12 @@ import yaml
 from github import Github, GithubException
 from github.Repository import Repository
 
-from github_label_bot.model import GitHubLabelManagementConfig
+from .model import GitHubLabelManagementConfig
+from .process import BaseProcess
 
 
 class GitHubOperationRunner:
-    def operate_with_github(self, callback: Callable[[Repository, GitHubLabelManagementConfig], None]) -> None:
+    def operate_with_github(self, processor: BaseProcess) -> None:
         # Load GitHub token from environment variable
         print(f"[DEBUG] Get GitHub token.")
         token = self._get_github_token()
@@ -29,7 +30,7 @@ class GitHubOperationRunner:
             try:
                 repo = github.get_repo(repo_name)
                 print(f"\nProcessing repository: {repo_name}")
-                callback(repo, config)
+                processor.process(repo, config)
             except GithubException as e:
                 print(f"Error processing {repo_name}: {e}")
 

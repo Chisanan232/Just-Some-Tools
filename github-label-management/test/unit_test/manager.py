@@ -105,14 +105,15 @@ class TestGitHubLabelBot:
         mock_download_labels = mocker.patch("github_label_bot.manager.DownloadFromRemote.process")
 
         # Mock configuration loading
-        mocker.patch("github_label_bot.manager.GitHubOperationRunner._load_label_config", return_value=GitHubOperationRunner()._load_label_config(mock_yaml_file))
+        config_model = GitHubOperationRunner()._load_label_config(mock_yaml_file)
+        mocker.patch("github_label_bot.manager.GitHubOperationRunner._load_label_config", return_value=config_model)
 
         # Call the function
         bot.download_as_config()
 
         # Assert that download_labels was called with the correct repository
         mock_github().get_repo.assert_called()
-        mock_download_labels.assert_called_once_with(mock_repo)
+        mock_download_labels.assert_called_once_with(mock_repo, config_model)
 
 
     # Test syncup_as_config
@@ -126,7 +127,8 @@ class TestGitHubLabelBot:
         mock_repo.get_labels.return_value = []
 
         # Mock configuration loading
-        mocker.patch("github_label_bot.manager.GitHubOperationRunner._load_label_config", return_value=GitHubOperationRunner()._load_label_config(mock_yaml_file))
+        config_model = GitHubOperationRunner()._load_label_config(mock_yaml_file)
+        mocker.patch("github_label_bot.manager.GitHubOperationRunner._load_label_config", return_value=config_model)
 
         # Call the function
         bot.syncup_as_config()

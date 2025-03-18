@@ -16,15 +16,7 @@ class GitHubLabelBot:
         self._github_runner = GitHubOperationRunner()
 
     def syncup_as_config(self) -> None:
-
-        def _sync_process(_repo, _config) -> None:
-            SyncUpAsRemote().process(_repo, _config)
-
-        self._github_runner.operate_with_github(_sync_process)
+        self._github_runner.operate_with_github(SyncUpAsRemote())
 
     def download_as_config(self) -> None:
-
-        def _download_process(_repo, _config) -> None:
-            DownloadFromRemote().process(_repo)
-
-        self._github_runner.operate_with_github(_download_process)
+        self._github_runner.operate_with_github(DownloadFromRemote())
