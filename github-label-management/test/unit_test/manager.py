@@ -95,7 +95,7 @@ class TestGitHubLabelBot:
         return mock_repo
 
     # Test download_as_config
-    def test_download_as_config(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_yaml_file):
+    def test_download_from_remote_repo(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_yaml_file):
         # Mock the token retrieval
         monkeypatch.setenv("GITHUB_TOKEN", "mock_token")
 
@@ -109,7 +109,7 @@ class TestGitHubLabelBot:
         mocker.patch("github_label_bot.manager.GitHubOperationRunner._load_label_config", return_value=config_model)
 
         # Call the function
-        bot.download_as_config()
+        bot.download_from_remote_repo()
 
         # Assert that download_labels was called with the correct repository
         mock_github().get_repo.assert_called()
@@ -117,7 +117,7 @@ class TestGitHubLabelBot:
 
 
     # Test syncup_as_config
-    def test_syncup_as_config(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_github_repo, mock_yaml_file):
+    def test_sync_from_remote_repo(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_github_repo, mock_yaml_file):
         # Mock the token retrieval
         monkeypatch.setenv("GITHUB_TOKEN", "mock_token")
 
@@ -131,7 +131,7 @@ class TestGitHubLabelBot:
         mocker.patch("github_label_bot.manager.GitHubOperationRunner._load_label_config", return_value=config_model)
 
         # Call the function
-        bot.syncup_as_config()
+        bot.sync_from_remote_repo()
 
         # Assert that repository was fetched and labels were synced
         mock_github().get_repo.assert_called()

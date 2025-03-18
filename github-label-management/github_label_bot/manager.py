@@ -15,8 +15,8 @@ class GitHubLabelBot:
     def __init__(self):
         self._github_runner = GitHubOperationRunner()
 
-    def syncup_as_config(self) -> None:
+    def sync_from_remote_repo(self) -> None:
         self._github_runner.operate_with_github(SyncUpAsRemote())
 
-    def download_as_config(self) -> None:
+    def download_from_remote_repo(self) -> None:
         self._github_runner.operate_with_github(DownloadFromRemote())
