@@ -12,14 +12,9 @@ from .model import GitHubLabelManagementConfig, Label as GitHubLabelBotLabel
 from ._utils.file.operation import YAML
 
 
-class GitHubLabelBot:
+class SyncProcess:
 
-    def _load_label_config(self, config_path: str) -> GitHubLabelManagementConfig:
-        """Load label configuration from YAML file."""
-        with open(config_path, 'r') as file:
-            return GitHubLabelManagementConfig.serialize(yaml.safe_load(file))
-
-    def _sync_labels(self, repo: Repository, label_config: GitHubLabelManagementConfig) -> None:
+    def sync_labels(self, repo: Repository, label_config: GitHubLabelManagementConfig) -> None:
         """Synchronize repository labels with configuration."""
         # Get existing labels
         existing_labels: Dict[str, GitHubLabel] = {label.name: label for label in repo.get_labels()}
@@ -52,10 +47,39 @@ class GitHubLabelBot:
                     print(f"Deleted label: {name}")
 
 
+class DownloadProcess:
+
+    def download_labels(self, repo: github.Repository) -> None:
+        existing_labels: Dict[str, GitHubLabel] = {label.name: label for label in repo.get_labels()}
+        labels_config: Dict[str, GitHubLabelBotLabel] = {}
+        for label_name, label_info in existing_labels.items():
+            print(f"[DEBUG] Sync label {label_name}!")
+            labels_config[label_name] = GitHubLabelBotLabel(
+                color=label_info.color,
+                description=label_info.description,
+            )
+        config = GitHubLabelManagementConfig(
+            repositories=[repo.full_name],
+            labels=labels_config,
+        )
+        print("[DEBUG] All labels has been sync!")
+        print(f"[DEBUG] Config: {config}")
+        YAML().write(path="./test/_data/github-labels.yaml", mode="w+", config=config.deserialize())
+        print("[DEBUG] Download GitHub label config finish!")
+
+
+class GitHubLabelBot:
+
+    def _load_label_config(self, config_path: str) -> GitHubLabelManagementConfig:
+        """Load label configuration from YAML file."""
+        with open(config_path, 'r') as file:
+            return GitHubLabelManagementConfig.serialize(yaml.safe_load(file))
+
+
     def syncup_as_config(self) -> None:
 
         def _sync_process(_repo, _config) -> None:
-            self._sync_labels(_repo, _config)
+            SyncProcess().sync_labels(_repo, _config)
 
         self._operate_with_github(_sync_process)
 
@@ -91,28 +115,9 @@ class GitHubLabelBot:
         return token
 
 
-    def _download_labels(self, repo: github.Repository) -> None:
-        existing_labels: Dict[str, GitHubLabel] = {label.name: label for label in repo.get_labels()}
-        labels_config: Dict[str, GitHubLabelBotLabel] = {}
-        for label_name, label_info in existing_labels.items():
-            print(f"[DEBUG] Sync label {label_name}!")
-            labels_config[label_name] = GitHubLabelBotLabel(
-                color=label_info.color,
-                description=label_info.description,
-            )
-        config = GitHubLabelManagementConfig(
-            repositories=[repo.full_name],
-            labels=labels_config,
-        )
-        print("[DEBUG] All labels has been sync!")
-        print(f"[DEBUG] Config: {config}")
-        YAML().write(path="./test/_data/github-labels.yaml", mode="w+", config=config.deserialize())
-        print("[DEBUG] Download GitHub label config finish!")
-
-
     def download_as_config(self) -> None:
 
         def _download_process(_repo, _config) -> None:
-            self._download_labels(_repo)
+            DownloadProcess().download_labels(_repo)
 
         self._operate_with_github(_download_process)

@@ -3,7 +3,7 @@ import os
 import pytest
 from unittest.mock import MagicMock, Mock
 import yaml
-from github_label_bot.manager import GitHubLabelBot
+from github_label_bot.manager import GitHubLabelBot, SyncProcess, DownloadProcess
 from github_label_bot.model import GitHubLabelManagementConfig, Label as GitHubLabelBotLabel
 from github.Repository import Repository
 
@@ -58,7 +58,7 @@ class TestGitHubLabelBot:
 
 
     # Test sync_labels
-    def test__sync_labels_update(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
+    def test_sync_labels_update(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
         mock_repo = mock_github_repo
 
         # Mock configuration for testing
@@ -71,7 +71,7 @@ class TestGitHubLabelBot:
         )
 
         # Call the function
-        bot._sync_labels(mock_repo, label_config)
+        SyncProcess().sync_labels(mock_repo, label_config)
 
         # Assert that label.edit was called with the updated properties
         mock_repo.get_labels.assert_called_once()
@@ -81,7 +81,7 @@ class TestGitHubLabelBot:
 
 
     # Test sync_labels with creating new labels
-    def test__sync_labels_create(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
+    def test_sync_labels_create(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
         mock_repo = mock_github_repo
 
         # Empty existing labels
@@ -97,7 +97,7 @@ class TestGitHubLabelBot:
         )
 
         # Call the function
-        bot._sync_labels(mock_repo, label_config)
+        SyncProcess().sync_labels(mock_repo, label_config)
 
         # Assert that create_label was called for the new label
         mock_repo.create_label.assert_called_once_with(
@@ -120,12 +120,12 @@ class TestGitHubLabelBot:
 
 
     # Test download_labels
-    def test__download_labels(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
+    def test_download_labels(self, bot: GitHubLabelBot, mocker: MockFixture, mock_github_repo):
         mock_repo = mock_github_repo
         mock_yaml = mocker.patch("github_label_bot.manager.YAML")
 
         # Call the function
-        bot._download_labels(mock_repo)
+        DownloadProcess().download_labels(mock_repo)
 
         # Assert that YAML().write() was called with appropriate arguments
         mock_yaml().write.assert_called_once()
@@ -143,7 +143,7 @@ class TestGitHubLabelBot:
         # Mock the GitHub client and repository
         mock_github = mocker.patch("github_label_bot.manager.Github")
         mock_repo = mock_github().get_repo.return_value
-        mock_download_labels = mocker.patch("github_label_bot.manager.GitHubLabelBot._download_labels")
+        mock_download_labels = mocker.patch("github_label_bot.manager.DownloadProcess.download_labels")
 
         # Mock configuration loading
         mocker.patch("github_label_bot.manager.GitHubLabelBot._load_label_config", return_value=bot._load_label_config(mock_yaml_file))
