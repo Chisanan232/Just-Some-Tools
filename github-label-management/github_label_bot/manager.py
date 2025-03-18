@@ -52,12 +52,16 @@ class GitHubLabelBot:
 
 
     def syncup_as_config(self) -> None:
+
+        def _sync_process(_repo, _config) -> None:
+            self._sync_labels(_repo, _config)
+
         # Load GitHub token from environment variable
         print(f"[DEBUG] Get GitHub token.")
         token = self._get_github_token()
 
         # Initialize GitHub client
-        print(f"[DEBUG] Initial GitHub repository instance.")
+        print("[DEBUG] Connect to GitHub ...")
         github = Github(token)
 
         # Load configuration
@@ -67,11 +71,11 @@ class GitHubLabelBot:
         # Process each repository
         print(f"[DEBUG] Start to sync up the GitHub label setting ...")
         for repo_name in config.repositories:
-            print(f"[DEBUG] Sync up GtHub project {repo_name}")
+            print(f"[DEBUG] Sync GtHub project {repo_name}")
             try:
                 repo = github.get_repo(repo_name)
                 print(f"\nProcessing repository: {repo_name}")
-                self._sync_labels(repo, config)
+                _sync_process(repo, config)
             except github.GithubException as e:
                 print(f"Error processing {repo_name}: {e}")
 
@@ -103,22 +107,29 @@ class GitHubLabelBot:
 
 
     def download_as_config(self) -> None:
+
+        def _download_process(_repo, _config) -> None:
+            self._download_labels(_repo)
+
         # Load GitHub token from environment variable
+        print(f"[DEBUG] Get GitHub token.")
         token = self._get_github_token()
 
         # Initialize GitHub client
         print("[DEBUG] Connect to GitHub ...")
         github = Github(token)
 
+        # Load configuration
         print(f"[DEBUG] Load the configuration.")
-        config_model = self._load_label_config('./test/_data/github-labels.yaml')
+        config = self._load_label_config('./test/_data/github-labels.yaml')
 
         # Process each repository
-        print(f"[DEBUG] config_model.repositories: {config_model.repositories}")
-        for repo in config_model.repositories:
+        print(f"[DEBUG] config_model.repositories: {config.repositories}")
+        for repo_name in config.repositories:
+            print(f"[DEBUG] Sync GtHub project {repo_name}")
             try:
-                repo = github.get_repo(repo)
-                print(f"\nProcessing repository: {repo}")
-                self._download_labels(repo)
+                repo = github.get_repo(repo_name)
+                print(f"\nProcessing repository: {repo_name}")
+                _download_process(repo, config)
             except github.GithubException as e:
-                print(f"Error processing {repo}: {e}")
+                print(f"Error processing {repo_name}: {e}")
