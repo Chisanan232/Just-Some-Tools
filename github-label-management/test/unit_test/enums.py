@@ -7,7 +7,6 @@ class TestOperation:
     @pytest.mark.parametrize(
         "input_value, expected_output",
         [
-            ("sync", Operation.Sync),
             ("sync_upstream", Operation.Sync_UpStream),
             ("sync_download", Operation.Sync_Download),
         ],
@@ -18,9 +17,9 @@ class TestOperation:
     @pytest.mark.parametrize(
         "input_value, expected_exception, match",
         [
-            ("INVALID", ValueError, "Invalid operation: INVALID"),
-            ("", ValueError, "Invalid operation: "),
-            (None, TypeError, None),
+            ("INVALID", ValueError, r"invalid Operation"),
+            ("", ValueError, r"invalid Operation"),
+            (None, ValueError, r"invalid Operation"),
         ],
     )
     def test_to_enum_invalid_cases(self, input_value, expected_exception, match):

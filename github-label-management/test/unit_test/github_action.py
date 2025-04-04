@@ -13,9 +13,8 @@ class TestGitHubAction:
     @pytest.mark.parametrize(
         ("mock_env", "expect"),
         [
-            ({"OPERATIONS": "sync"}, [Operation.Sync]),
-            ({"OPERATIONS": "sync,sync_upstream"}, [Operation.Sync, Operation.Sync_UpStream]),
-            ({"OPERATIONS": "sync_download,sync,sync_upstream"}, [Operation.Sync_Download, Operation.Sync, Operation.Sync_UpStream]),
+            ({"OPERATIONS": "sync_download"}, [Operation.Sync_Download]),
+            ({"OPERATIONS": "sync_download,sync_upstream"}, [Operation.Sync_Download, Operation.Sync_UpStream]),
             ({"OPERATIONS": "sync_upstream"}, [Operation.Sync_UpStream]),
         ],
     )

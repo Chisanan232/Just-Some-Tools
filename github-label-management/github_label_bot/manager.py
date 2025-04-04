@@ -29,11 +29,7 @@ def run_bot() -> None:
     bot = GitHubLabelBot()
     print(f"[DEBUG] github_action_inputs.operation: {github_action_inputs.operation}")
     for opt in github_action_inputs.operation:
-        if opt is Operation.Sync:
-            print(f"[DEBUG] run sync ...")
-            bot.sync_from_remote_repo()
-            bot.download_from_remote_repo()
-        elif opt is Operation.Sync_UpStream:
+        if opt is Operation.Sync_UpStream:
             print(f"[DEBUG] run syncup ...")
             bot.sync_from_remote_repo()
         elif opt is Operation.Sync_Download:

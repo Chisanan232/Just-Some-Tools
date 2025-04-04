@@ -2,7 +2,6 @@ from enum import Enum
 
 
 class Operation(Enum):
-    Sync = "sync"
     Sync_UpStream = "sync_upstream"
     Sync_Download = "sync_download"
 
@@ -11,4 +10,4 @@ class Operation(Enum):
         try:
             return Operation(value.lower())
         except Exception:
-            raise ValueError(f"'{value}' is not a valid Operation")
+            raise ValueError(f"'{value}' is invalid Operation")
