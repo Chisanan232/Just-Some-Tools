@@ -8,7 +8,7 @@ jobs:
 #    name: Prepare all unit test items
     uses: Chisanan232/GitHub-Action_Reusable_Workflows-Python/.github/workflows/rw_get_tests.yaml@develop
     with:
-      test_working_directory: './github_label_bot'
+      test_working_directory: './github-label-management'
       shell_arg: test/unit_test/
 
   run_unit-test:
@@ -19,7 +19,7 @@ jobs:
       runtime_os: ubuntu-latest
       python_version: '3.12'
       test_type: unit-test
-      test_working_directory: './github_label_bot'
+      test_working_directory: './github-label-management'
       all_test_items_paths: ${{needs.prep_unit-test.outputs.all_test_items}}
 
   unit-test_codecov:
