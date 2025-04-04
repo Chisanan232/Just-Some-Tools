@@ -8,7 +8,6 @@ jobs:
 #    name: Prepare all unit test items
     uses: Chisanan232/GitHub-Action_Reusable_Workflows-Python/.github/workflows/rw_get_tests.yaml@develop
     with:
-      test_working_directory: './github-label-management'
       shell_path: './github-label-management/scripts/ci/get-all-tests.sh'
       shell_arg: test/unit_test/
 
