@@ -1,6 +1,10 @@
+import os
+from collections import namedtuple
+from unittest.mock import patch, Mock, MagicMock
+
 from pytest_mock import MockFixture
 import pytest
-from github_label_bot.manager import GitHubLabelBot
+from github_label_bot.manager import GitHubLabelBot, run_bot
 from github_label_bot.model import GitHubLabelManagementConfig
 from github.Repository import Repository
 
@@ -136,3 +140,37 @@ class TestGitHubLabelBot:
         # Assert that repository was fetched and labels were synced
         mock_github().get_repo.assert_called()
         mock_repo.create_label.assert_called()
+
+
+ExpectBotCalls = namedtuple("ExpectBotCalls", ("syncup", "download"))
+
+@pytest.mark.parametrize(
+    ("operations", "expect_calls"),
+    [
+        ("sync_upstream", ExpectBotCalls(syncup=True, download=False)),
+        ("sync_download", ExpectBotCalls(syncup=False, download=True)),
+        ("sync_download,sync_upstream", ExpectBotCalls(syncup=True, download=True)),
+    ],
+)
+def test_run_bot(operations: str, expect_calls: ExpectBotCalls):
+    # Mock the under test functions
+    github_label_bot = MagicMock()
+    github_label_bot.sync_from_remote_repo = Mock()
+    github_label_bot.download_from_remote_repo = Mock()
+    with patch("github_label_bot.manager.GitHubLabelBot", return_value=github_label_bot) as mock_bot_instance:
+        with patch.dict(os.environ, {"OPERATIONS": operations}, clear=True):
+            run_bot()
+
+            mock_bot_instance.assert_called_once()
+            
+            # Check sync_from_remote_repo calls
+            if expect_calls.syncup:
+                github_label_bot.sync_from_remote_repo.assert_called_once()
+            else:
+                github_label_bot.sync_from_remote_repo.assert_not_called()
+                
+            # Check download_from_remote_repo calls
+            if expect_calls.download:
+                github_label_bot.download_from_remote_repo.assert_called_once()
+            else:
+                github_label_bot.download_from_remote_repo.assert_not_called()
