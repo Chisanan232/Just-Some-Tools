@@ -19,9 +19,8 @@ jobs:
     with:
       runtime_os: ubuntu-latest
       python_version: '3.12'
-      install_dependency_with_group: test
-      test_type: unit-test
       test_working_directory: './github-label-management'
+      test_type: unit-test
       all_test_items_paths: ${{needs.prep_unit-test.outputs.all_test_items}}
 
   unit-test_codecov:
