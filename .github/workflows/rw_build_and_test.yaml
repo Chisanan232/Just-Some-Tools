@@ -15,7 +15,7 @@ jobs:
   run_unit-test:
 #    name: Run all unit test items
     needs: prep_unit-test
-    uses: Chisanan232/GitHub-Action_Reusable_Workflows-Python/.github/workflows/rw_poetry_run_test.yaml@develop
+    uses: .github/workflows/rw_poetry_run_test.yaml
     with:
       runtime_os: ubuntu-latest
       python_version: '3.12'
