@@ -28,17 +28,17 @@ dependencies = [
     "PyYAML (>=6.0)",
     "pygithub (>=2.5.0,<3.0.0)",
 ]
-packages = [
-    { include = "github_label_bot/" },
-]
 
 [tool.poetry]
-name = "github-label-management"
-version = "0.0.0"
-description = "🤖 A simple tool to manage GitHub labels."
-authors = [
-    "Liu, Bryant <chi10211201@cycu.org.tw>",
+packages = [
+    { include = "./github_label_bot/" },
 ]
+#name = "github-label-management"
+#version = "0.0.0"
+#description = "🤖 A simple tool to manage GitHub labels."
+#authors = [
+#    "Liu, Bryant <chi10211201@cycu.org.tw>",
+#]
 
 [project.urls]
 Homepage = "https://github.com/Chisanan232/Just-Some-Tools/github-label-management/"

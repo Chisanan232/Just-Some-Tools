@@ -1,0 +1,60 @@
+name: GitHub label bot CI
+
+on:
+  # No matter for push or pull request events, it would trigger CI for safely saving the source code.
+  # For the push event, it only runs building and testing.
+  push:
+    branches:
+      - "master"
+    paths:
+#     For GitHub Action
+      - ".github/workflows/github-label-bot_ci.yaml"
+#     For source code and test
+      - "github-label-management/github_label_bot/**/*.py"
+      - "!**/__pkg_info__.py"
+      - "github-label-management/test/**/*.py"
+#     For configurations for test or CI
+      - "github_label_bot/.coveragerc"
+      - "github_label_bot/pytest.ini"
+#     For Python project configuration
+      - "github_label_bot/pyproject.toml"
+      - "github_label_bot/poetry.lock"
+
+  # For the push event, in addition to build and test would be run, it would trigger other service to keep the reports
+  # or other checking, i.e., record the test report by CodeCov and check the code quality by SonarQube.
+  pull_request:
+    branches:
+      - "master"
+    paths:
+#     For GitHub Action
+      - ".github/workflows/github-label-bot_ci.yaml"
+#     For source code and test
+      - "github-label-management/github_label_bot/**/*.py"
+      - "!**/__pkg_info__.py"
+      - "github-label-management/test/**/*.py"
+#     For configurations for test or CI
+      - "github_label_bot/.coveragerc"
+      - "github_label_bot/pytest.ini"
+#     For Python project configuration
+      - "github_label_bot/pyproject.toml"
+      - "github_label_bot/poetry.lock"
+
+jobs:
+  build-and-test:
+#    name: Run all tests and organize all test reports
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') }}
+    uses: ./.github/workflows/rw_build_and_test.yaml
+
+
+  unit-test_codecov_finish:
+#    name: Organize and generate the testing report and upload it to Codecov
+    if: ${{ github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref_name == 'master') }}
+    needs: build-and-test
+    uses: Chisanan232/GitHub-Action_Reusable_Workflows-Python/.github/workflows/rw_upload_test_cov_report.yaml@v7.2
+    secrets:
+      codecov_token: ${{ secrets.CODECOV_TOKEN }}
+    with:
+      test_type: unit-test
+      upload-to-codecov: true
+      codecov_flags: github-label-bot_unit-test  # Required if 'upload-to-codecov' is true
+      codecov_name: just-some-tool  # Required if 'upload-to-codecov' is true
