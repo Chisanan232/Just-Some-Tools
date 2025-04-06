@@ -34,6 +34,9 @@ packages = [
     { include = "./github_label_bot/" },
 ]
 
+[project.scripts]
+sync-github-labels = "github_label_bot.manager:run_bot"
+
 [project.urls]
 Homepage = "https://github.com/Chisanan232/Just-Some-Tools/github-label-management/"
 Repository = "https://github.com/Chisanan232/Just-Some-Tools/github-label-management/"
