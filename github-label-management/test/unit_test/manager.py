@@ -1,4 +1,5 @@
 import os
+import pathlib
 from collections import namedtuple
 from unittest.mock import patch, Mock, MagicMock
 
@@ -164,24 +165,29 @@ ExpectBotCalls = namedtuple("ExpectBotCalls", ("syncup", "download"))
     ],
 )
 def test_run_bot(operations: str, expect_calls: ExpectBotCalls):
-    # Mock the under test functions
-    github_label_bot = MagicMock()
-    github_label_bot.sync_from_remote_repo = Mock()
-    github_label_bot.download_from_remote_repo = Mock()
-    with patch("github_label_bot.manager.GitHubLabelBot", return_value=github_label_bot) as mock_bot_instance:
-        with patch.dict(os.environ, {"OPERATIONS": operations}, clear=True):
-            run_bot()
+    config = pathlib.Path("./test-github-labels.yaml")
+    config.touch()
+    try:
+        # Mock the under test functions
+        github_label_bot = MagicMock()
+        github_label_bot.sync_from_remote_repo = Mock()
+        github_label_bot.download_from_remote_repo = Mock()
+        with patch("github_label_bot.manager.GitHubLabelBot", return_value=github_label_bot) as mock_bot_instance:
+            with patch.dict(os.environ, {"CONFIG_PATH": str(config), "OPERATIONS": operations}, clear=True):
+                run_bot()
 
-            mock_bot_instance.assert_called_once()
-            
-            # Check sync_from_remote_repo calls
-            if expect_calls.syncup:
-                github_label_bot.sync_from_remote_repo.assert_called_once()
-            else:
-                github_label_bot.sync_from_remote_repo.assert_not_called()
-                
-            # Check download_from_remote_repo calls
-            if expect_calls.download:
-                github_label_bot.download_from_remote_repo.assert_called_once()
-            else:
-                github_label_bot.download_from_remote_repo.assert_not_called()
+                mock_bot_instance.assert_called_once()
+
+                # Check sync_from_remote_repo calls
+                if expect_calls.syncup:
+                    github_label_bot.sync_from_remote_repo.assert_called_once()
+                else:
+                    github_label_bot.sync_from_remote_repo.assert_not_called()
+
+                # Check download_from_remote_repo calls
+                if expect_calls.download:
+                    github_label_bot.download_from_remote_repo.assert_called_once()
+                else:
+                    github_label_bot.download_from_remote_repo.assert_not_called()
+    finally:
+        os.remove(config)

@@ -1,4 +1,5 @@
 import os
+import pathlib
 from typing import List, Dict
 from unittest.mock import patch
 
@@ -19,11 +20,18 @@ class TestGitHubAction:
         ],
     )
     def test_from_env_valid_env_vars(self, mock_env: Dict[str, str], expect_operations: List[Operation]):
-        with patch.dict(os.environ, mock_env, clear=True):
-            action = GitHubAction.from_env()
-            assert action.config_path == "./test-github-labels.yaml"
-            assert action.operation == expect_operations
+        config = pathlib.Path(mock_env["CONFIG_PATH"])
+        config.touch()
+        try:
+            with patch.dict(os.environ, mock_env, clear=True):
+                action = GitHubAction.from_env()
+                assert action.config_path == str(config)
+                assert action.operation == expect_operations
+        finally:
+            os.remove(config)
 
-    def test_from_env_missing_env_vars(self):
-        with pytest.raises(ValueError, match=r"OPERATIONS.{0,64}not set.{0,64}empty."):
-            GitHubAction.from_env()
+    @pytest.mark.parametrize("os_env", [{"CONFIG_PATH": "./test-github-labels.yaml"}, {"OPERATIONS": "sync_upstream"}])
+    def test_from_env_missing_env_vars(self, os_env: dict):
+        with patch.dict(os.environ, os_env, clear=True):
+            with pytest.raises(ValueError, match="Miss"):
+                GitHubAction.from_env()

@@ -1,3 +1,4 @@
+import pathlib
 from dataclasses import dataclass
 
 import os
@@ -13,8 +14,11 @@ class GitHubAction:
 
     @staticmethod
     def from_env() -> "GitHubAction":
-        config_path = os.getenv("CONFIG_PATH")
+        config_path_from_env = os.getenv("CONFIG_PATH")
         operations_env = os.getenv("OPERATIONS")
-        if not operations_env:
-            raise ValueError("Environment variable 'OPERATIONS' is not set or empty.")
-        return GitHubAction(config_path=config_path, operation=[Operation.to_enum(o) for o in operations_env.split(",")])
+        if not config_path_from_env or not operations_env:
+            raise ValueError("Miss required environment variables.")
+
+        config_path = pathlib.Path(config_path_from_env)
+        assert config_path.exists()
+        return GitHubAction(config_path=str(config_path), operation=[Operation.to_enum(o) for o in operations_env.split(",")])
