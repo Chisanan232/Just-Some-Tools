@@ -22,7 +22,7 @@ class GitHubOperationRunner:
 
         # Load configuration
         print(f"[DEBUG] Load the configuration.")
-        config = self._load_label_config('./test/_data/github-labels.yaml')
+        config = self._load_label_config(action_inputs.config_path)
 
         # Process each repository
         print(f"[DEBUG] Start to sync up the GitHub label setting ...")
