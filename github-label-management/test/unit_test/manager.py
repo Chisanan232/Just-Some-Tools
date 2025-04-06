@@ -4,6 +4,9 @@ from unittest.mock import patch, Mock, MagicMock
 
 from pytest_mock import MockFixture
 import pytest
+
+from github_label_bot.enums import Operation
+from github_label_bot.github_action import GitHubAction
 from github_label_bot.manager import GitHubLabelBot, run_bot
 from github_label_bot.model import GitHubLabelManagementConfig
 from github.Repository import Repository
@@ -23,6 +26,14 @@ labels:
     description: New feature or improvement.
 delete_unused: true
 """
+
+
+@pytest.fixture(scope="module")
+def github_action_inputs() -> GitHubAction:
+    return GitHubAction(
+        config_path="test-github-label-bot-config.yml",
+        operation=[Operation.Sync_UpStream],
+    )
 
 
 class TestGitHubOperationRunner:
@@ -99,7 +110,7 @@ class TestGitHubLabelBot:
         return mock_repo
 
     # Test download_as_config
-    def test_download_from_remote_repo(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_yaml_file):
+    def test_download_from_remote_repo(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_yaml_file, github_action_inputs: GitHubAction):
         # Mock the token retrieval
         monkeypatch.setenv("GITHUB_TOKEN", "mock_token")
 
@@ -113,7 +124,7 @@ class TestGitHubLabelBot:
         mocker.patch("github_label_bot.manager.GitHubOperationRunner._load_label_config", return_value=config_model)
 
         # Call the function
-        bot.download_from_remote_repo()
+        bot.download_from_remote_repo(github_action_inputs)
 
         # Assert that download_labels was called with the correct repository
         mock_github().get_repo.assert_called()
@@ -121,7 +132,7 @@ class TestGitHubLabelBot:
 
 
     # Test syncup_as_config
-    def test_sync_from_remote_repo(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_github_repo, mock_yaml_file):
+    def test_sync_from_remote_repo(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_github_repo, mock_yaml_file, github_action_inputs: GitHubAction):
         # Mock the token retrieval
         monkeypatch.setenv("GITHUB_TOKEN", "mock_token")
 
@@ -135,7 +146,7 @@ class TestGitHubLabelBot:
         mocker.patch("github_label_bot.manager.GitHubOperationRunner._load_label_config", return_value=config_model)
 
         # Call the function
-        bot.sync_from_remote_repo()
+        bot.sync_from_remote_repo(github_action_inputs)
 
         # Assert that repository was fetched and labels were synced
         mock_github().get_repo.assert_called()

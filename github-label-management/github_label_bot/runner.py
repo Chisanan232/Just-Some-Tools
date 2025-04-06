@@ -5,12 +5,13 @@ import yaml
 from github import Github, GithubException
 from github.Repository import Repository
 
+from .github_action import GitHubAction
 from .model import GitHubLabelManagementConfig
 from .process import BaseProcess
 
 
 class GitHubOperationRunner:
-    def operate_with_github(self, processor: BaseProcess) -> None:
+    def operate_with_github(self, action_inputs: GitHubAction, processor: BaseProcess) -> None:
         # Load GitHub token from environment variable
         print(f"[DEBUG] Get GitHub token.")
         token = self._get_github_token()
