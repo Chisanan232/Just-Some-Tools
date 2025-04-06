@@ -1,0 +1,49 @@
+name: "Sync GitHub labels"
+description: "Sync GitHub labels from configuration."
+author: "Bryant Liu"
+inputs:
+  config:
+    description: "The configuration of GitHub labels detail info. [default: .github/labels.yaml]"
+    required: false
+    default: ".github/labels.yaml"
+  operations:
+    description: "What exactly operations you ask the CI to do. [options: sync_upstream,sync_download]"
+    required: false
+    default: "sync_upstream"
+runs:
+  using: "composite"
+  steps:
+    - name: Fail-fast in unsupported environments
+      if: runner.os == 'Windows'
+      shell: bash -eEuo pipefail {0}
+      run: |
+        >&2 echo This action is only able to run under GNU/Linux or Apple MacOS environments
+        exit 1
+
+    - name: Clone project
+      uses: actions/checkout@v4
+
+    - name: Install Python 3.12 for running GitHub-Labels-Bot
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install Python dependencies for GitHub-Labels-Bot
+      shell: bash
+      working-directory: './github-label-management'
+      run: |
+        pip --version
+        pip install -U poetry
+        poetry --version
+        poetry install
+
+    - name: Run GitHub-Labels-Bot with operations *${{ inputs.operations }}*
+      shell: bash
+      working-directory: './github-label-management'
+      run: sync-github-labels
+      env:
+        CONFIG_PATH: ${{ inputs.config }}
+        OPERATIONS: ${{ inputs.operations }}
+branding:
+  icon: github
+  color: 'black'
