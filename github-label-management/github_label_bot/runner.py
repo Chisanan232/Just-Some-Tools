@@ -5,12 +5,13 @@ import yaml
 from github import Github, GithubException
 from github.Repository import Repository
 
+from .github_action import GitHubAction
 from .model import GitHubLabelManagementConfig
 from .process import BaseProcess
 
 
 class GitHubOperationRunner:
-    def operate_with_github(self, processor: BaseProcess) -> None:
+    def operate_with_github(self, action_inputs: GitHubAction, processor: BaseProcess) -> None:
         # Load GitHub token from environment variable
         print(f"[DEBUG] Get GitHub token.")
         token = self._get_github_token()
@@ -21,7 +22,7 @@ class GitHubOperationRunner:
 
         # Load configuration
         print(f"[DEBUG] Load the configuration.")
-        config = self._load_label_config('./test/_data/github-labels.yaml')
+        config = self._load_label_config(action_inputs.config_path)
 
         # Process each repository
         print(f"[DEBUG] Start to sync up the GitHub label setting ...")
