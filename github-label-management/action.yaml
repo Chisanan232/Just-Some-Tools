@@ -40,7 +40,7 @@ runs:
     - name: Run GitHub-Labels-Bot with operations *${{ inputs.operations }}*
       shell: bash
       working-directory: './github-label-management'
-      run: sync-github-labels
+      run: poetry run sync-github-labels
       env:
         CONFIG_PATH: ${{ inputs.config }}
         OPERATIONS: ${{ inputs.operations }}
