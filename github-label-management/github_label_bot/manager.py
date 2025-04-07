@@ -17,11 +17,11 @@ class GitHubLabelBot:
     def __init__(self):
         self._github_runner = GitHubOperationRunner()
 
-    def sync_from_remote_repo(self) -> None:
-        self._github_runner.operate_with_github(SyncUpAsRemote())
+    def sync_from_remote_repo(self, action_inputs: GitHubAction) -> None:
+        self._github_runner.operate_with_github(action_inputs, SyncUpAsRemote())
 
-    def download_from_remote_repo(self) -> None:
-        self._github_runner.operate_with_github(DownloadFromRemote())
+    def download_from_remote_repo(self, action_inputs: GitHubAction) -> None:
+        self._github_runner.operate_with_github(action_inputs, DownloadFromRemote())
 
 
 def run_bot() -> None:
