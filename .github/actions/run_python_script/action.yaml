@@ -34,7 +34,7 @@ runs:
     - name: Run Python script ${{ inputs.script-file-path }}
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      run: poetry run pythons ${{ inputs.script-file-path }}
+      run: poetry run python ${{ inputs.script-file-path }}
 branding:
   icon: python
   color: 'green'
