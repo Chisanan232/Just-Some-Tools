@@ -51,9 +51,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate the running result
-        shell: bash
-        run: |
-          python3 github-label-management/scripts/ci/verify_sync_upstream_e2e_test.py
+        uses: ./.github/actions/run_python_script/
+        with:
+          working-directory: './github-label-management'
+          script-file-path: './scripts/ci/verify_sync_upstream_e2e_test.py'
 
   run-sync_download:
     runs-on: ubuntu-latest
@@ -70,9 +71,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate the running result
-        shell: bash
-        run: |
-          python3 github-label-management/scripts/ci/verify_sync_download_e2e_test.py
+        uses: ./.github/actions/run_python_script/
+        with:
+          working-directory: './github-label-management'
+          script-file-path: './scripts/ci/verify_sync_download_e2e_test.py'
 
   run-sync_upstream-and-sync_download:
     runs-on: ubuntu-latest
@@ -88,11 +90,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Validate the running result
-        shell: bash
-        run: |
-          python3 github-label-management/scripts/ci/verify_sync_download_e2e_test.py
-          python3 github-label-management/scripts/ci/verify_sync_upstream_e2e_test.py
+      - name: Validate the running result about downloading configuration from remote repo
+        uses: ./.github/actions/run_python_script/
+        with:
+          working-directory: './github-label-management'
+          script-file-path: './scripts/ci/verify_sync_download_e2e_test.py'
+
+      - name: Validate the running result about sync the labels up to remote repo
+        uses: ./.github/actions/run_python_script/
+        with:
+          working-directory: './github-label-management'
+          script-file-path: './scripts/ci/verify_sync_upstream_e2e_test.py'
 
   with-invalid-os:
     runs-on: windows-latest
