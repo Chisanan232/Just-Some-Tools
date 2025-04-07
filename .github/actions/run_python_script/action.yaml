@@ -1,0 +1,40 @@
+name: "Run Python script"
+description: "Just run target Python script."
+author: "Bryant Liu"
+inputs:
+  python-version:
+    description: "The Python version for running the script."
+    required: false
+    default: "3.12"
+  script-file-path:
+    description: "The file path of the Python script."
+    required: true
+    default: ""
+  working-directory:
+    description: "The working directory for test running."
+    required: false
+    default: "./"
+runs:
+  using: "composite"
+  steps:
+    - name: Install Python ${{ inputs.python-version }} for running GitHub-Labels-Bot
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Python dependencies for the scripts
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        pip --version
+        pip install -U poetry
+        poetry --version
+        poetry install
+
+    - name: Run Python script ${{ inputs.script-file-path }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: poetry run python ${{ inputs.script-file-path }}
+branding:
+  icon: python
+  color: 'green'
