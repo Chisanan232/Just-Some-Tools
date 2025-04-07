@@ -31,6 +31,10 @@ on:
       - "github-label-management/pyproject.toml"
       - "github-label-management/poetry.lock"
 
+permissions:
+  contents: write  # Need this to push commits
+  pull-requests: write
+
 jobs:
   run-sync_upstream:
     runs-on: ubuntu-latest
