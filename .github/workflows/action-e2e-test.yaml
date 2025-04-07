@@ -41,7 +41,7 @@ jobs:
       - name: Run GitHub-Label-Bot about sync setting of configuration up to remote upstream
         uses: ./github-label-management/
         with:
-          config: ./github-label-management/test/_data/sample.yaml
+          config: ./test/_data/sample.yaml
           operations: sync_upstream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -60,7 +60,7 @@ jobs:
       - name: Run GitHub-Label-Bot about downloading setting from remote upstream into configuration
         uses: ./github-label-management/
         with:
-          config: ./github-label-management/test/_data/e2e-test.yaml
+          config: ./test/_data/e2e-test.yaml
           operations: sync_download
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -79,7 +79,7 @@ jobs:
       - name: Run GitHub-Label-Bot
         uses: ./github-label-management/
         with:
-          config: ./github-label-management/test/_data/e2e-test.yaml
+          config: ./test/_data/e2e-test.yaml
           operations: sync_download,sync_upstream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
