@@ -1,0 +1,131 @@
+name: E2E test
+
+on:
+  # No matter for push or pull request events, it would trigger CI for safely saving the source code.
+  # For the push event, it only runs building and testing.
+  push:
+    branches:
+      - "master"
+    paths:
+      # End-to-End test
+      - ".github/workflows/action-e2e-test.yaml"
+      # Source code and config
+      - "github-label-management/github_label_bot/**/*.py"
+      - "!**/__pkg_info__.py"
+      - "github-label-management/action.yaml"
+      - "github-label-management/pyproject.toml"
+      - "github-label-management/poetry.lock"
+
+  # For the push event, in addition to build and test would be run, it would trigger other service to keep the reports
+  # or other checking, i.e., record the test report by CodeCov and check the code quality by SonarQube.
+  pull_request:
+    branches:
+      - "master"
+    paths:
+      # End-to-End test
+      - ".github/workflows/action-e2e-test.yaml"
+      # Source code and config
+      - "github-label-management/github_label_bot/**/*.py"
+      - "!**/__pkg_info__.py"
+      - "github-label-management/action.yaml"
+      - "github-label-management/pyproject.toml"
+      - "github-label-management/poetry.lock"
+
+permissions:
+  contents: write  # Need this to push commits
+  pull-requests: write
+
+jobs:
+  run-sync_upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v4
+
+      - name: Run GitHub-Label-Bot about sync setting of configuration up to remote upstream
+        uses: ./github-label-management/
+        with:
+          config: ./test/_data/sample.yaml
+          operations: sync_upstream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate the running result
+        uses: ./.github/actions/run_python_script/
+        with:
+          working-directory: './github-label-management'
+          script-file-path: './scripts/ci/verify_sync_upstream_e2e_test.py'
+
+  run-sync_download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v4
+
+      - name: Run GitHub-Label-Bot about downloading setting from remote upstream into configuration
+        uses: ./github-label-management/
+        with:
+          config: ./test/_data/e2e-test.yaml
+          operations: sync_download
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate the running result
+        uses: ./.github/actions/run_python_script/
+        with:
+          working-directory: './github-label-management'
+          script-file-path: './scripts/ci/verify_sync_download_e2e_test.py'
+
+  run-sync_upstream-and-sync_download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v4
+
+      - name: Run GitHub-Label-Bot
+        uses: ./github-label-management/
+        with:
+          config: ./test/_data/e2e-test.yaml
+          operations: sync_download,sync_upstream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate the running result about downloading configuration from remote repo
+        uses: ./.github/actions/run_python_script/
+        with:
+          working-directory: './github-label-management'
+          script-file-path: './scripts/ci/verify_sync_download_e2e_test.py'
+
+      - name: Validate the running result about sync the labels up to remote repo
+        uses: ./.github/actions/run_python_script/
+        with:
+          working-directory: './github-label-management'
+          script-file-path: './scripts/ci/verify_sync_upstream_e2e_test.py'
+
+  with-invalid-os:
+    runs-on: windows-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v4
+
+      - name: Run GitHub-Label-Bot
+        id: e2e-test-invalid-case
+        uses: ./github-label-management/
+        with:
+          config: ./test/config/e2e_test/with_invalid_os.yaml
+          operations: sync_upstream,sync_download
+        continue-on-error: true
+
+      - name: Check on failures
+        run: |
+          echo "[DEBUG] running state: ${{ steps.e2e-test-invalid-case.outcome }}"
+          if ( "${{ steps.e2e-test-invalid-case.outcome }}" -eq "failure" )
+          {
+              echo "It runs fail as expect. Test PASS."
+              exit 0
+          }
+          else
+          {
+              echo "It runs success as unexpect. Test FAIL."
+              exit 1
+          }
