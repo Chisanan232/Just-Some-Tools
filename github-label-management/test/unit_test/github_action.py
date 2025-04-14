@@ -21,7 +21,6 @@ class TestGitHubAction:
     )
     def test_from_env_valid_env_vars(self, mock_env: Dict[str, str], expect_operations: List[Operation]):
         config = pathlib.Path(mock_env["CONFIG_PATH"])
-        config.touch()
         try:
             with patch.dict(os.environ, mock_env, clear=True):
                 action = GitHubAction.from_env()
