@@ -52,6 +52,7 @@ class TestGitHubOperationRunner:
 
 
     # Test load_label_config
+    @patch.dict(os.environ, {"GITHUB_REPOSITORY": "Chisanan232/Just-Some-Tools"}, clear=True)
     def test__load_label_config(self, bot: GitHubOperationRunner, mock_yaml_file):
         config = bot._load_label_config(mock_yaml_file)
         assert isinstance(config, GitHubLabelManagementConfig)
@@ -111,6 +112,7 @@ class TestGitHubLabelBot:
         return mock_repo
 
     # Test download_as_config
+    @patch.dict(os.environ, {"GITHUB_REPOSITORY": "Chisanan232/Just-Some-Tools"}, clear=True)
     def test_download_from_remote_repo(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_yaml_file, github_action_inputs: GitHubAction):
         # Mock the token retrieval
         monkeypatch.setenv("GITHUB_TOKEN", "mock_token")
@@ -133,6 +135,7 @@ class TestGitHubLabelBot:
 
 
     # Test syncup_as_config
+    @patch.dict(os.environ, {"GITHUB_REPOSITORY": "Chisanan232/Just-Some-Tools"}, clear=True)
     def test_sync_from_remote_repo(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_github_repo, mock_yaml_file, github_action_inputs: GitHubAction):
         # Mock the token retrieval
         monkeypatch.setenv("GITHUB_TOKEN", "mock_token")

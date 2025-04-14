@@ -1,3 +1,4 @@
+import os
 from abc import ABCMeta, abstractmethod
 from ast import Str
 from dataclasses import dataclass, field
@@ -67,7 +68,7 @@ class GitHubLabelManagementConfig(_BaseConfig):
 
     @staticmethod
     def serialize(data: Dict) -> "GitHubLabelManagementConfig":
-        repositories = data.get("repositories", [])
+        repositories = data.get("repositories", [os.environ["GITHUB_REPOSITORY"]])
         delete_unused = data.get("delete_unused", False)
         labels = data.get("labels", {})
         if not (repositories or labels):

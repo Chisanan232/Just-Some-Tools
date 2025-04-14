@@ -1,6 +1,8 @@
+import os
 import re
 from abc import ABCMeta, abstractmethod
 from typing import Dict, cast, Any
+from unittest.mock import patch
 
 import pytest
 
@@ -21,6 +23,7 @@ class _BaseConfigTestSuite(metaclass=ABCMeta):
     def _verify_deserialized_data(self, model: Dict[str, str]) -> None:
         pass
 
+    @patch.dict(os.environ, {"GITHUB_REPOSITORY": "Chisanan232/Just-Some-Tools"}, clear=True)
     def test_serialize(self, model: _BaseConfig):
         result = model.serialize(data=self._test_data_for_serialize())
         self._verify_serialized_data(result)
