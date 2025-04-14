@@ -20,5 +20,6 @@ class GitHubAction:
             raise ValueError("Miss required environment variables.")
 
         config_path = pathlib.Path(config_path_from_env)
-        assert config_path.exists()
+        if not config_path.exists():
+            config_path.touch()
         return GitHubAction(config_path=str(config_path), operation=[Operation.to_enum(o) for o in operations_env.split(",")])
