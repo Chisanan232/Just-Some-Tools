@@ -46,6 +46,9 @@ class GitHubLabelManagementConfig(_BaseConfig):
     delete_unused: bool = False
     labels: Dict[str, Label] = field(default_factory=dict)
 
+    # inner usage
+    config_path: str = field(default_factory=str)
+
     def __post_init__(self):
         if self.labels:
             labels = {}

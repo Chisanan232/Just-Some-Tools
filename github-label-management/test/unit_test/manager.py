@@ -67,6 +67,7 @@ class TestGitHubLabelBot:
         # Assert that download_labels was called with the correct repository
         mock_github().get_repo.assert_called()
         config_model = GitHubOperationRunner()._load_label_config(mock_yaml_file)
+        config_model.config_path = github_action_inputs.config_path
         mock_download_labels.assert_called_once_with(mock_repo, config_model)
 
     # Test syncup_as_config

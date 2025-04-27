@@ -94,6 +94,13 @@ class TestGitHubOperationRunner:
                 ["owner/default-repo"],
                 "owner/default-repo",
             ),
+            # Case 5: Config file exists with empty settings
+            (
+                    True,
+                    {},
+                    ["owner/default-repo"],
+                    "owner/default-repo",
+            ),
         ],
     )
     def test_force_load_config(

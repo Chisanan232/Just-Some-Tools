@@ -24,10 +24,10 @@ def run_bot() -> None:
     for opt in github_action_inputs.operation:
         if opt is Operation.Sync_UpStream:
             print(f"[DEBUG] run syncup ...")
-            bot.sync_from_remote_repo()
+            bot.sync_from_remote_repo(github_action_inputs)
         elif opt is Operation.Sync_Download:
             print(f"[DEBUG] run download ...")
-            bot.download_from_remote_repo()
+            bot.download_from_remote_repo(github_action_inputs)
         else:
             raise ValueError(f"Unsupported operation: {opt}")
 

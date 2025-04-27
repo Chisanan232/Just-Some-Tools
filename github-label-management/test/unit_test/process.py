@@ -91,7 +91,8 @@ class TestDownloadFromRemote:
         mock_yaml = mocker.patch("github_label_bot.process.YAML")
 
         # Call the function
-        bot.process(mock_repo, Mock())
+        dummy_config = GitHubLabelManagementConfig()
+        bot.process(mock_repo, dummy_config)
 
         # Assert that YAML().write() was called with appropriate arguments
         mock_yaml().write.assert_called_once()

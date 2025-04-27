@@ -58,6 +58,5 @@ class DownloadFromRemote(BaseProcess):
             labels=labels_config,
         )
         print("[DEBUG] All labels has been sync!")
-        print(f"[DEBUG] Config: {config}")
-        YAML().write(path="./test/_data/github-labels.yaml", mode="w+", config=config.deserialize())
+        YAML().write(path=label_config.config_path, mode="w+", config=config.deserialize())
         print("[DEBUG] Download GitHub label config finish!")

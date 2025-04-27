@@ -43,14 +43,18 @@ class GitHubOperationRunner:
 
     def _force_load_config(self, action_inputs: GitHubAction) -> Tuple[GitHubLabelManagementConfig, list[str]]:
         config_path = pathlib.Path(action_inputs.config_path)
+        print(f"[DEBUG] action_inputs.config_path: {action_inputs.config_path}")
         if config_path.exists():
             print(f"[DEBUG] Found configuration! Load its settings ...")
             config = self._load_label_config(action_inputs.config_path)
+            config.config_path = action_inputs.config_path
             repositories = config.repositories
         else:
             print(f"[DEBUG] Cannot find configuration. Initial empty one ...")
             config = GitHubLabelManagementConfig()
+            config.config_path = action_inputs.config_path
             repositories = [os.environ["GITHUB_REPOSITORY"]]
+        print(f"[DEBUG] config: {config}")
         return config, repositories
 
     def _load_label_config(self, config_path: str) -> GitHubLabelManagementConfig:

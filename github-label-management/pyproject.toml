@@ -33,12 +33,9 @@ dependencies = [
 packages = [
     { include = "./github_label_bot/" },
 ]
-#name = "github-label-management"
-#version = "0.0.0"
-#description = "🤖 A simple tool to manage GitHub labels."
-#authors = [
-#    "Liu, Bryant <chi10211201@cycu.org.tw>",
-#]
+
+[project.scripts]
+sync-github-labels = "github_label_bot.manager:run_bot"
 
 [project.urls]
 Homepage = "https://github.com/Chisanan232/Just-Some-Tools/github-label-management/"

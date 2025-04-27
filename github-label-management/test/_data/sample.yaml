@@ -1,0 +1,9 @@
+repositories:
+  - Chisanan232/Just-Some-Tools
+
+delete_unused: false  # Set to true to remove labels not in config
+
+labels:
+  "🤖 e2e test":
+    color: FBCA04
+    description: This label be created by e2e test
