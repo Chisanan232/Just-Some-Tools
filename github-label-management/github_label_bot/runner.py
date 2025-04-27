@@ -46,10 +46,12 @@ class GitHubOperationRunner:
         if config_path.exists():
             print(f"[DEBUG] Found configuration! Load its settings ...")
             config = self._load_label_config(action_inputs.config_path)
+            config.config_path = action_inputs.config_path
             repositories = config.repositories
         else:
             print(f"[DEBUG] Cannot find configuration. Initial empty one ...")
             config = GitHubLabelManagementConfig()
+            config.config_path = action_inputs.config_path
             repositories = [os.environ["GITHUB_REPOSITORY"]]
         return config, repositories
 
