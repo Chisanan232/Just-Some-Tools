@@ -1,12 +1,11 @@
 import os
 import re
 from abc import ABCMeta, abstractmethod
-from typing import Dict, cast, Any
+from typing import Any, Dict
 from unittest.mock import patch
 
 import pytest
-
-from github_label_bot.model import _BaseConfig, Label, GitHubLabelManagementConfig
+from github_label_bot.model import GitHubLabelManagementConfig, Label, _BaseConfig
 
 
 class _BaseConfigTestSuite(metaclass=ABCMeta):
@@ -134,7 +133,11 @@ class TestGitHubLabelManagementConfig(_BaseConfigTestSuite):
             {"repositories": [], "delete_unused": False, "labels": {}},
             {"repositories": None, "delete_unused": False, "labels": {}},
             {"repositories": [], "delete_unused": False, "labels": None},
-            {"repositories": [], "delete_unused": False, "labels": {"new feature": {"color": "a2eeef", "description": "New feature or request"}}},
+            {
+                "repositories": [],
+                "delete_unused": False,
+                "labels": {"new feature": {"color": "a2eeef", "description": "New feature or request"}},
+            },
             {"repositories": ["Chisanan232/repo"], "delete_unused": False, "labels": {}},
         ],
     )

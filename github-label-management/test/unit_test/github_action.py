@@ -1,10 +1,9 @@
 import os
 import pathlib
-from typing import List, Dict
+from typing import Dict, List
 from unittest.mock import patch
 
 import pytest
-
 from github_label_bot.enums import Operation
 from github_label_bot.github_action import GitHubAction
 
@@ -15,7 +14,10 @@ class TestGitHubAction:
         ("mock_env", "expect_operations"),
         [
             ({"CONFIG_PATH": "./test-github-labels.yaml", "OPERATIONS": "sync_download"}, [Operation.Sync_Download]),
-            ({"CONFIG_PATH": "./test-github-labels.yaml", "OPERATIONS": "sync_download,sync_upstream"}, [Operation.Sync_Download, Operation.Sync_UpStream]),
+            (
+                {"CONFIG_PATH": "./test-github-labels.yaml", "OPERATIONS": "sync_download,sync_upstream"},
+                [Operation.Sync_Download, Operation.Sync_UpStream],
+            ),
             ({"CONFIG_PATH": "./test-github-labels.yaml", "OPERATIONS": "sync_upstream"}, [Operation.Sync_UpStream]),
         ],
     )

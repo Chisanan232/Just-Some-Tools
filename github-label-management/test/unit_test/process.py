@@ -2,10 +2,10 @@ from unittest.mock import Mock
 
 import pytest
 from github.Repository import Repository
+from github_label_bot.model import GitHubLabelManagementConfig
+from github_label_bot.model import Label as GitHubLabelBotLabel
+from github_label_bot.process import DownloadFromRemote, SyncUpAsRemote
 from pytest_mock import MockFixture
-
-from github_label_bot.model import GitHubLabelManagementConfig, Label as GitHubLabelBotLabel
-from github_label_bot.process import SyncUpAsRemote, DownloadFromRemote
 
 
 class TestSyncUpAsRemote:
@@ -23,7 +23,6 @@ class TestSyncUpAsRemote:
         mock_label.description = "A bug label"
         mock_repo.get_labels.return_value = [mock_label]
         return mock_repo
-
 
     # Test sync_labels
     def test_sync_labels_update(self, process: SyncUpAsRemote, mocker: MockFixture, mock_github_repo):
@@ -47,7 +46,6 @@ class TestSyncUpAsRemote:
             name="Bug", color="ffffff", description="New description"
         )
 
-
     # Test sync_labels with creating new labels
     def test_sync_labels_create(self, process: SyncUpAsRemote, mocker: MockFixture, mock_github_repo):
         mock_repo = mock_github_repo
@@ -68,9 +66,7 @@ class TestSyncUpAsRemote:
         process.process(mock_repo, label_config)
 
         # Assert that create_label was called for the new label
-        mock_repo.create_label.assert_called_once_with(
-            name="NewLabel", color="000000", description="A new label"
-        )
+        mock_repo.create_label.assert_called_once_with(name="NewLabel", color="000000", description="A new label")
 
 
 class TestDownloadFromRemote:
@@ -101,5 +97,5 @@ class TestDownloadFromRemote:
         mock_yaml().write.assert_called_once()
         written_config = mock_yaml().write.call_args[1]["config"]
         print(f"[DEBUG] written_config: {written_config}")
-        assert "Bug" in written_config['labels'].keys()
-        assert written_config['labels']["Bug"]['color'] == "d73a4a"
+        assert "Bug" in written_config["labels"].keys()
+        assert written_config["labels"]["Bug"]["color"] == "d73a4a"

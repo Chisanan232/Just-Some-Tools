@@ -1,14 +1,7 @@
-import os
-from collections.abc import Callable
-
-import yaml
-from github import Github
-from github.Repository import Repository
-
 from github_label_bot.enums import Operation
 from github_label_bot.github_action import GitHubAction
-from .model import GitHubLabelManagementConfig
-from .process import SyncUpAsRemote, DownloadFromRemote
+
+from .process import DownloadFromRemote, SyncUpAsRemote
 from .runner import GitHubOperationRunner
 
 
@@ -39,5 +32,5 @@ def run_bot() -> None:
             raise ValueError(f"Unsupported operation: {opt}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_bot()

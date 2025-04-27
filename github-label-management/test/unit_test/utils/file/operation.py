@@ -2,7 +2,6 @@ from abc import ABCMeta, abstractmethod
 from unittest.mock import mock_open, patch
 
 import pytest
-
 from github_label_bot._utils.file.operation import JSON, YAML, _BaseFileOperation
 
 
