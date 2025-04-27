@@ -98,7 +98,8 @@ class TestGitHubLabelBot:
         file_path = tmp_path / "config.yaml"
         with open(file_path, "w") as file:
             file.write(SAMPLE_YAML)
-        return str(file_path)
+        yield str(file_path)
+        os.remove(str(file_path))
 
     # Mocked GitHub Repository
     @pytest.fixture
@@ -122,15 +123,13 @@ class TestGitHubLabelBot:
         mock_repo = mock_github().get_repo.return_value
         mock_download_labels = mocker.patch("github_label_bot.manager.DownloadFromRemote.process")
 
-        # Mock configuration loading
-        config_model = GitHubOperationRunner()._load_label_config(mock_yaml_file)
-        mocker.patch("github_label_bot.manager.GitHubOperationRunner._load_label_config", return_value=config_model)
-
         # Call the function
+        github_action_inputs.config_path = mock_yaml_file
         bot.download_from_remote_repo(github_action_inputs)
 
         # Assert that download_labels was called with the correct repository
         mock_github().get_repo.assert_called()
+        config_model = GitHubOperationRunner()._load_label_config(mock_yaml_file)
         mock_download_labels.assert_called_once_with(mock_repo, config_model)
 
 
@@ -145,11 +144,8 @@ class TestGitHubLabelBot:
         mock_repo = mock_github().get_repo.return_value
         mock_repo.get_labels.return_value = []
 
-        # Mock configuration loading
-        config_model = GitHubOperationRunner()._load_label_config(mock_yaml_file)
-        mocker.patch("github_label_bot.manager.GitHubOperationRunner._load_label_config", return_value=config_model)
-
         # Call the function
+        github_action_inputs.config_path = mock_yaml_file
         bot.sync_from_remote_repo(github_action_inputs)
 
         # Assert that repository was fetched and labels were synced
