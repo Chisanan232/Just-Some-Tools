@@ -1,4 +1,5 @@
 import os
+import pathlib
 from typing import Callable
 
 import yaml
@@ -22,11 +23,19 @@ class GitHubOperationRunner:
 
         # Load configuration
         print(f"[DEBUG] Load the configuration.")
-        config = self._load_label_config(action_inputs.config_path)
+        config_path = pathlib.Path(action_inputs.config_path)
+        if config_path.exists():
+            print(f"[DEBUG] Found configuration! Load its settings ...")
+            config = self._load_label_config(action_inputs.config_path)
+            repositories = config.repositories
+        else:
+            print(f"[DEBUG] Cannot find configuration. Initial empty one ...")
+            config = GitHubLabelManagementConfig()
+            repositories = [os.environ["GITHUB_REPOSITORY"]]
 
         # Process each repository
         print(f"[DEBUG] Start to sync up the GitHub label setting ...")
-        for repo_name in config.repositories:
+        for repo_name in repositories:
             print(f"[DEBUG] Sync GtHub project {repo_name}")
             try:
                 repo = github.get_repo(repo_name)
