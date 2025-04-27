@@ -54,6 +54,7 @@ class GitHubOperationRunner:
             config = GitHubLabelManagementConfig()
             config.config_path = action_inputs.config_path
             repositories = [os.environ["GITHUB_REPOSITORY"]]
+        print(f"[DEBUG] config: {config}")
         return config, repositories
 
     def _load_label_config(self, config_path: str) -> GitHubLabelManagementConfig:
