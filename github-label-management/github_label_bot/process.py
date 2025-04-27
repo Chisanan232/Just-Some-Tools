@@ -1,4 +1,3 @@
-import pathlib
 from abc import ABCMeta, abstractmethod
 from typing import Dict
 
@@ -59,10 +58,5 @@ class DownloadFromRemote(BaseProcess):
             labels=labels_config,
         )
         print("[DEBUG] All labels has been sync!")
-        print(f"[DEBUG] Config: {config}")
-        print(f"[DEBUG] Config.deserialize(): {config.deserialize()}")
-        config_path_obj = pathlib.Path(label_config.config_path)
-        print(f"[DEBUG] config.config_path: {label_config.config_path}")
-        print(f"[DEBUG] config_path_obj.absolute(): {config_path_obj.absolute()}")
         YAML().write(path=label_config.config_path, mode="w+", config=config.deserialize())
         print("[DEBUG] Download GitHub label config finish!")
