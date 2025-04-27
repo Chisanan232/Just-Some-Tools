@@ -22,6 +22,9 @@ runs:
 
     - name: Clone project
       uses: actions/checkout@v4
+      with:
+        repository: 'Chisanan232/Just-Some-Tools'
+        ref: 'master'
 
     - name: Install Python 3.12 for running GitHub-Labels-Bot
       uses: actions/setup-python@v5
