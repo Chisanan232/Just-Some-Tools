@@ -5,7 +5,7 @@ from github import Github
 from github_label_bot._utils import YAML
 from github_label_bot.model import GitHubLabelManagementConfig
 
-github_management_config = GitHubLabelManagementConfig.serialize(YAML().read("./github-label-management/test/_data/e2e-test.yaml"))
+github_management_config = GitHubLabelManagementConfig.serialize(YAML().read("./test/_data/e2e-test.yaml"))
 
 token = os.getenv('GITHUB_TOKEN')
 github = Github(token)
