@@ -22,14 +22,10 @@ class TestGitHubAction:
         ],
     )
     def test_from_env_valid_env_vars(self, mock_env: Dict[str, str], expect_operations: List[Operation]):
-        config = pathlib.Path(mock_env["CONFIG_PATH"])
-        try:
-            with patch.dict(os.environ, mock_env, clear=True):
-                action = GitHubAction.from_env()
-                assert action.config_path == str(config)
-                assert action.operation == expect_operations
-        finally:
-            os.remove(config)
+        with patch.dict(os.environ, mock_env, clear=True):
+            action = GitHubAction.from_env()
+            assert action.config_path == mock_env["CONFIG_PATH"]
+            assert action.operation == expect_operations
 
     @pytest.mark.parametrize("os_env", [{"CONFIG_PATH": "./test-github-labels.yaml"}, {"OPERATIONS": "sync_upstream"}])
     def test_from_env_missing_env_vars(self, os_env: dict):
