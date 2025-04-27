@@ -1,7 +1,6 @@
+import os
 import pathlib
 from dataclasses import dataclass
-
-import os
 from typing import List
 
 from github_label_bot.enums import Operation
@@ -22,4 +21,6 @@ class GitHubAction:
         config_path = pathlib.Path(config_path_from_env)
         if not config_path.exists():
             config_path.touch()
-        return GitHubAction(config_path=str(config_path), operation=[Operation.to_enum(o) for o in operations_env.split(",")])
+        return GitHubAction(
+            config_path=str(config_path), operation=[Operation.to_enum(o) for o in operations_env.split(",")]
+        )
