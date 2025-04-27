@@ -1,10 +1,9 @@
 import os
 import pathlib
-from typing import Callable, Tuple
+from typing import Tuple
 
 import yaml
 from github import Github, GithubException
-from github.Repository import Repository
 
 from .github_action import GitHubAction
 from .model import GitHubLabelManagementConfig
@@ -37,7 +36,7 @@ class GitHubOperationRunner:
                 print(f"Error processing {repo_name}: {e}")
 
     def _get_github_token(self):
-        token = os.getenv('GITHUB_TOKEN')
+        token = os.getenv("GITHUB_TOKEN")
         if not token:
             raise ValueError("GITHUB_TOKEN environment variable not set")
         return token
@@ -56,5 +55,5 @@ class GitHubOperationRunner:
 
     def _load_label_config(self, config_path: str) -> GitHubLabelManagementConfig:
         """Load label configuration from YAML file."""
-        with open(config_path, 'r') as file:
+        with open(config_path, "r") as file:
             return GitHubLabelManagementConfig.serialize(yaml.safe_load(file))

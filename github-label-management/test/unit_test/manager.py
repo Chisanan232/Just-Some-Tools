@@ -1,18 +1,15 @@
 import os
 import pathlib
 from collections import namedtuple
-from unittest.mock import patch, Mock, MagicMock
+from unittest.mock import MagicMock, Mock, patch
 
-from pytest_mock import MockFixture
 import pytest
-
+from github.Repository import Repository
 from github_label_bot.enums import Operation
 from github_label_bot.github_action import GitHubAction
 from github_label_bot.manager import GitHubLabelBot, run_bot
-from github_label_bot.model import GitHubLabelManagementConfig
-from github.Repository import Repository
-
 from github_label_bot.runner import GitHubOperationRunner
+from pytest_mock import MockFixture
 
 from ._values import SAMPLE_YAML
 
@@ -52,7 +49,9 @@ class TestGitHubLabelBot:
 
     # Test download_as_config
     @patch.dict(os.environ, {"GITHUB_REPOSITORY": "Chisanan232/Just-Some-Tools"}, clear=True)
-    def test_download_from_remote_repo(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_yaml_file, github_action_inputs: GitHubAction):
+    def test_download_from_remote_repo(
+        self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_yaml_file, github_action_inputs: GitHubAction
+    ):
         # Mock the token retrieval
         monkeypatch.setenv("GITHUB_TOKEN", "mock_token")
 
@@ -70,10 +69,17 @@ class TestGitHubLabelBot:
         config_model = GitHubOperationRunner()._load_label_config(mock_yaml_file)
         mock_download_labels.assert_called_once_with(mock_repo, config_model)
 
-
     # Test syncup_as_config
     @patch.dict(os.environ, {"GITHUB_REPOSITORY": "Chisanan232/Just-Some-Tools"}, clear=True)
-    def test_sync_from_remote_repo(self, bot: GitHubLabelBot, mocker: MockFixture, monkeypatch, mock_github_repo, mock_yaml_file, github_action_inputs: GitHubAction):
+    def test_sync_from_remote_repo(
+        self,
+        bot: GitHubLabelBot,
+        mocker: MockFixture,
+        monkeypatch,
+        mock_github_repo,
+        mock_yaml_file,
+        github_action_inputs: GitHubAction,
+    ):
         # Mock the token retrieval
         monkeypatch.setenv("GITHUB_TOKEN", "mock_token")
 
@@ -92,6 +98,7 @@ class TestGitHubLabelBot:
 
 
 ExpectBotCalls = namedtuple("ExpectBotCalls", ("syncup", "download"))
+
 
 @pytest.mark.parametrize(
     ("operations", "expect_calls"),

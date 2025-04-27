@@ -6,7 +6,8 @@ from github.Label import Label as GitHubLabel
 from github.Repository import Repository
 
 from ._utils import YAML
-from .model import GitHubLabelManagementConfig, Label as GitHubLabelBotLabel
+from .model import GitHubLabelManagementConfig
+from .model import Label as GitHubLabelBotLabel
 
 
 class BaseProcess(metaclass=ABCMeta):
@@ -26,20 +27,11 @@ class SyncUpAsRemote(BaseProcess):
         for name, props in label_config.labels.items():
             if name in existing_labels:
                 label = existing_labels[name]
-                if (label.color != props.color or
-                    label.description != props.description):
-                    label.edit(
-                        name=name,
-                        color=props.color,
-                        description=props.description
-                    )
+                if label.color != props.color or label.description != props.description:
+                    label.edit(name=name, color=props.color, description=props.description)
                     print(f"Updated label: {name}")
             else:
-                repo.create_label(
-                    name=name,
-                    color=props.color,
-                    description=props.description
-                )
+                repo.create_label(name=name, color=props.color, description=props.description)
                 print(f"Created label: {name}")
 
         # Delete labels not in config if specified

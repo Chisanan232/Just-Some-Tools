@@ -1,18 +1,15 @@
 import os
-import pathlib
+from typing import Dict, List
+from unittest import mock
 from unittest.mock import patch
 
 import pytest
-from unittest import mock
-from typing import List, Dict, Tuple
-
 import yaml
 from github.Repository import Repository
-from pytest_mock import MockFixture
-
-from github_label_bot.runner import GitHubOperationRunner
 from github_label_bot.github_action import GitHubAction
-from github_label_bot.model import GitHubLabelManagementConfig, Label
+from github_label_bot.model import GitHubLabelManagementConfig
+from github_label_bot.runner import GitHubOperationRunner
+from pytest_mock import MockFixture
 
 from ._values import SAMPLE_YAML
 
@@ -30,7 +27,6 @@ class TestGitHubOperationRunner:
             file.write(SAMPLE_YAML)
         return str(file_path)
 
-
     # Test load_label_config
     @patch.dict(os.environ, {"GITHUB_REPOSITORY": "Chisanan232/Just-Some-Tools"}, clear=True)
     def test__load_label_config(self, bot: GitHubOperationRunner, mock_yaml_file):
@@ -39,7 +35,6 @@ class TestGitHubOperationRunner:
         assert "my-org/my-repository" in config.repositories
         assert "Bug" in config.labels
         assert config.labels["Bug"].color == "d73a4a"
-
 
     # Mocked GitHub Repository
     @pytest.fixture
@@ -52,13 +47,11 @@ class TestGitHubOperationRunner:
         mock_repo.get_labels.return_value = [mock_label]
         return mock_repo
 
-
     # Test _get_github_token with a valid token
     def test__get_github_token(self, bot: GitHubOperationRunner, monkeypatch):
         monkeypatch.setenv("GITHUB_TOKEN", "mock_token")
         token = bot._get_github_token()
         assert token == "mock_token"
-
 
     # Test _get_github_token when no token is set
     def test__get_github_token_no_env_var(self, bot: GitHubOperationRunner, monkeypatch):
@@ -71,38 +64,42 @@ class TestGitHubOperationRunner:
         [
             # Case 1: Config file exists with repositories
             (
-                True, 
-                {"repositories": ["owner/repo1", "owner/repo2"], "delete_unused": False, "labels": {}}, 
+                True,
+                {"repositories": ["owner/repo1", "owner/repo2"], "delete_unused": False, "labels": {}},
                 ["owner/repo1", "owner/repo2"],
                 "owner/default-repo",
             ),
             # Case 2: Config file exists with empty repositories
             (
-                True, 
-                {"repositories": [], "delete_unused": True, "labels": {"label1": {"color": "ff0000", "description": "desc"}}}, 
+                True,
+                {
+                    "repositories": [],
+                    "delete_unused": True,
+                    "labels": {"label1": {"color": "ff0000", "description": "desc"}},
+                },
                 [],
                 "owner/default-repo",
             ),
             # Case 3: Config file exists without repositories key
             (
-                True, 
-                {"delete_unused": False, "labels": {"label1": {"color": "ff0000", "description": "desc"}}}, 
+                True,
+                {"delete_unused": False, "labels": {"label1": {"color": "ff0000", "description": "desc"}}},
                 ["owner/default-repo"],
                 "owner/default-repo",
             ),
             # Case 4: Config file doesn't exist
             (
-                False, 
-                None, 
+                False,
+                None,
                 ["owner/default-repo"],
                 "owner/default-repo",
             ),
-        ]
+        ],
     )
     def test_force_load_config(
-        self, 
-        config_exists: bool, 
-        config_content: Dict, 
+        self,
+        config_exists: bool,
+        config_content: Dict,
         expected_repositories: List[str],
         env_repository: str,
         tmp_path,
@@ -118,7 +115,7 @@ class TestGitHubOperationRunner:
         with mock.patch.dict(os.environ, {"GITHUB_REPOSITORY": env_repository}):
             if config_exists:
                 # Create and write to config file
-                with open(config_path, 'w') as f:
+                with open(config_path, "w") as f:
                     yaml.dump(config_content, f)
 
             # Call the method under test
