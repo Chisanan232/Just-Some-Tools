@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Run GitHub-Label-Bot about sync setting of configuration up to remote upstream
         uses: ./github-label-management/
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Run GitHub-Label-Bot about downloading setting from remote upstream into configuration
         uses: ./github-label-management/
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Run GitHub-Label-Bot
         uses: ./github-label-management/
@@ -106,7 +106,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Clone project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Run GitHub-Label-Bot
         id: e2e-test-invalid-case
